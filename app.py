@@ -251,6 +251,7 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     init_db()
-    server = ThreadingHTTPServer(("127.0.0.1", int(os.getenv("PORT", "8000"))), Handler)
-    print(f"Mindful support assistant running at http://127.0.0.1:{server.server_port}")
+    host = os.getenv("HOST", "0.0.0.0")
+    server = ThreadingHTTPServer((host, int(os.getenv("PORT", "8000"))), Handler)
+    print(f"Mindful support assistant running at http://{host}:{server.server_port}")
     server.serve_forever()

@@ -24,6 +24,15 @@ Without a Gemini key, the app uses a local supportive fallback and still perform
 
 Gemini requests time out after 8 seconds by default and then use the local fallback. Adjust this with `GEMINI_TIMEOUT_SECONDS` if needed.
 
+## Deploy to Render
+
+1. Push this repository to GitHub.
+2. In Render, choose **New > Blueprint** and select the repository. Render will use `render.yaml`.
+3. In the service environment settings, add `GEMINI_API_KEY` as a secret. The app works without it using the local fallback.
+4. Open the deployed URL and check `/api/health`.
+
+The service uses Render's ephemeral filesystem, so the SQLite trend database is reset when the service is redeployed or restarted. Use a managed database and update `DB_PATH` before storing production user data.
+
 ## Safety
 
 This is not medical care. Crisis keyword detection is intentionally hard-coded and runs before Gemini. The Sri Lankan resources included are 1926 (National Mental Health Helpline) and 1333 (CCCline); verify local resources before production deployment. Add authentication, encryption, retention controls, consent, and professional review before handling real users.
