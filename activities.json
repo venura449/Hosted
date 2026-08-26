@@ -1,0 +1,6 @@
+[
+  {"name": "Box breathing", "description": "Inhale for 4 counts, hold for 4, exhale for 4, and hold for 4. Repeat four times.", "tags": ["anxiety", "high_intensity"]},
+  {"name": "One-page journaling", "description": "Write what you feel, what you need, and one small thing you can do next. No editing needed.", "tags": ["reflection", "sadness"]},
+  {"name": "Gentle drawing", "description": "Draw slow lines or shapes for five minutes and notice the movement of your hand.", "tags": ["reflection", "stress"]},
+  {"name": "Grounding with music", "description": "Play one calming song and name five sounds, four sensations, and three things you can see.", "tags": ["anxiety", "stress"]}
+]

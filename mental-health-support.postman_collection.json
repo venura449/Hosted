@@ -1,0 +1,197 @@
+{
+  "info": {
+    "name": "Mental Health Support API",
+    "description": "Bilingual English/Sinhala mental health support API. No secrets are stored in this collection. Activities are returned only for loneliness or boredom messages. The streaming request returns Server-Sent Events.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "userId",
+      "value": "postman-user"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "health"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('API is healthy', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json().ok).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat - English",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_id\": \"{{userId}}\",\n  \"message\": \"I feel stressed and overwhelmed today\",\n  \"history\": []\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/chat",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "chat"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Chat request succeeds', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json()).to.have.property('reply');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat - Sinhala",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_id\": \"{{userId}}\",\n  \"message\": \"මට අද ආතතියක් සහ බරක් දැනෙනවා\",\n  \"history\": []\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/chat",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "chat"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Sinhala chat request succeeds', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json()).to.have.property('reply');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat - Streaming",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "text/event-stream"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_id\": \"{{userId}}\",\n  \"message\": \"I feel lonely today\",\n  \"history\": []\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/chat/stream",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "chat", "stream"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Streaming chat request succeeds', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('text/event-stream');",
+              "});",
+              "pm.test('Stream contains token and done events', function () {",
+              "    var body = pm.response.text();",
+              "    pm.expect(body).to.include('\\\"type\\\": \\\"token\\\"');",
+              "    pm.expect(body).to.include('\\\"type\\\": \\\"done\\\"');",
+              "    pm.expect(body).to.include('One-page journaling');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Crisis Safety Check - Sinhala",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_id\": \"{{userId}}\",\n  \"message\": \"මට මැරෙන්න හිතෙනවා\",\n  \"history\": []\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/chat",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "chat"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Crisis request is escalated', function () {",
+              "    pm.response.to.have.status(200);",
+              "    var body = pm.response.json();",
+              "    pm.expect(body.crisis).to.eql(true);",
+              "    pm.expect(body.reply).to.include('1926');",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
