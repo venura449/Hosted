@@ -10,7 +10,7 @@ from urllib import request
 ROOT = Path(__file__).parent
 DB_PATH = ROOT / "wellbeing.db"
 ACTIVITIES_PATH = ROOT / "activities.json"
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
 GEMINI_TIMEOUT_SECONDS = float(os.getenv("GEMINI_TIMEOUT_SECONDS", "8"))
 CRISIS_PATTERN = re.compile(
     r"(suicid|kill myself|end my life|hurt myself|harm myself|self[- ]harm|hopeless|මැරෙන්න|දිවි නසා|තමන්ට හානි|බලාපොරොත්තු නැහැ|අසරණ)",
