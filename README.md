@@ -11,6 +11,8 @@ python app.py
 
 The server exposes `GET /api/health` and `POST /api/chat`.
 
+See [API_DOCUMENTATION.md](API_DOCUMENTATION.md) for the complete endpoint reference.
+
 ```powershell
 Invoke-RestMethod http://127.0.0.1:8000/api/health
 
@@ -30,6 +32,8 @@ Gemini requests time out after 8 seconds by default and then use the local fallb
 2. In Render, choose **New > Blueprint** and select the repository. Render will use `render.yaml`.
 3. In the service environment settings, add `GEMINI_API_KEY` as a secret. The app works without it using the local fallback.
 4. Open the deployed URL and check `/api/health`.
+
+The default model is `gemma-4-31b-it`. Override it with the `GEMINI_MODEL` environment variable when needed.
 
 The service uses Render's ephemeral filesystem, so the SQLite trend database is reset when the service is redeployed or restarted. Use a managed database and update `DB_PATH` before storing production user data.
 
