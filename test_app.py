@@ -49,3 +49,17 @@ def test_hello_has_a_greeting_fallback(tmp_path):
     result = app.response_for({"user_id": "test", "message": "hello"})
     assert result["crisis"] is False
     assert result["reply"] == "Hello. I am here with you. How are you feeling today?"
+
+
+def test_crisis_label_matches_crisis_model_reply(tmp_path, monkeypatch):
+    setup_database(tmp_path)
+    monkeypatch.setattr(app, "call_gemini", lambda messages: "Please call a suicide crisis helpline now.")
+    result = app.response_for({"user_id": "test", "message": "I need help understanding this"})
+    assert result["crisis"] is True
+
+
+def test_streaming_crisis_label_matches_streamed_reply(tmp_path, monkeypatch):
+    setup_database(tmp_path)
+    monkeypatch.setattr(app, "stream_gemini", lambda messages: iter(("Please contact a suicide crisis helpline.",)))
+    events = list(app.stream_response_for({"user_id": "test", "message": "I need help understanding this"}))
+    assert events[-1]["crisis"] is True

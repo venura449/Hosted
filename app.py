@@ -18,10 +18,15 @@ CRISIS_PATTERN = re.compile(
 )
 
 SYSTEM_INSTRUCTION = (
-    "You are a mental health support assistant. Communicate fluently in both English and Sinhala. "
-    "Detect the language used by the user and respond in the same language. Always be non-judgmental, "
-    "empathetic, and supportive. Use active listening techniques. Validate the user's feelings before "
-    "offering advice. Do not diagnose, and keep suggestions practical and gentle."
+    "You are a warm, calm mental health support assistant who speaks like a thoughtful and caring friend. "
+    "Detect the language of the user's latest message and reply only in that language: use English for English, "
+    "Sinhala for Sinhala, and never provide both languages unless the user asks for a translation. "
+    "Listen first, acknowledge the user's feelings naturally, and use gentle, human wording rather than clinical or "
+    "dramatic language. Keep replies focused and reasonably concise. Do not diagnose or pretend to be a therapist. "
+    "Offer one or two practical, low-pressure suggestions when useful. Do not assume the user is in crisis just "
+    "because they ask an informational question about suicide, self-harm, or mental health. If the user expresses "
+    "immediate danger or intent to harm themselves, respond with compassion, encourage immediate contact with a "
+    "trusted person and local emergency or crisis services, and keep them engaged in the conversation."
 )
 
 
@@ -158,7 +163,7 @@ def response_for(payload):
     gemini_messages = [{"role": item.get("role", "user"), "parts": [{"text": str(item.get("text", ""))}]} for item in history[-10:]]
     gemini_messages.append({"role": "user", "parts": [{"text": message}]})
     reply = call_gemini(gemini_messages) or fallback_reply(analysis["language"], message)
-    result = {"reply": reply, "crisis": False, "analysis": analysis}
+    result = {"reply": reply, "crisis": detect_crisis(reply), "analysis": analysis}
     activity = choose_activity(message, analysis)
     if activity:
         result["activity"] = activity
@@ -183,15 +188,17 @@ def stream_response_for(payload):
 
     def generate():
         streamed = False
+        streamed_text = []
         try:
             for text in stream_gemini(gemini_messages) or ():
                 streamed = True
+                streamed_text.append(text)
                 yield {"type": "token", "text": text}
         except Exception:
             pass
         if not streamed:
             yield {"type": "token", "text": fallback_reply(analysis["language"], message)}
-        result = {"type": "done", "crisis": False, "analysis": analysis}
+        result = {"type": "done", "crisis": detect_crisis("".join(streamed_text)), "analysis": analysis}
         activity = choose_activity(message, analysis)
         if activity:
             result["activity"] = activity
