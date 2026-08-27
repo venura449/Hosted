@@ -33,7 +33,7 @@ Gemini requests time out after 8 seconds by default and then use the local fallb
 3. In the service environment settings, add `GEMINI_API_KEY` as a secret. The app works without it using the local fallback.
 4. Open the deployed URL and check `/api/health`.
 
-The default model is `gemini-3.5-flash`. Override it with the `GEMINI_MODEL` environment variable when needed.
+The default model is `gemma-4-26b`. Override it with the `GEMINI_MODEL` environment variable when needed.
 
 The service uses Render's ephemeral filesystem, so the SQLite trend database is reset when the service is redeployed or restarted. Use a managed database and update `DB_PATH` before storing production user data.
 
